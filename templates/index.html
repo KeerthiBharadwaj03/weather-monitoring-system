@@ -1,0 +1,44 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Monitoring System</title>
+    <script src="static/static.js"></script>
+</head>
+<body>
+    <h1>Weather Monitoring System</h1>
+    <h2>Daily Weather Summaries</h2>
+    <div id="weather-summaries"></div>
+
+    <h2>Weather Alerts</h2>
+    <div id="weather-alerts"></div>
+
+    <script>
+        // Fetch weather data and alerts when the page loads
+        window.onload = function() {
+            fetch('/get_weather_data')
+                .then(response => response.json())
+                .then(data => {
+                    let summariesDiv = document.getElementById('weather-summaries');
+                    summariesDiv.innerHTML = '';
+                    for (const [city, summary] of Object.entries(data)) {
+                        summariesDiv.innerHTML += `<h3>${city}</h3>
+                            <p>Average Temperature: ${summary.average_temperature}°C</p>
+                            <p>Max Temperature: ${summary.max_temperature}°C</p>
+                            <p>Min Temperature: ${summary.min_temperature}°C</p>
+                            <p>Dominant Condition: ${summary.dominant_condition}</p>`;
+                    }
+                });
+
+            fetch('/get_alerts')
+                .then(response => response.json())
+                .then(alerts => {
+                    let alertsDiv = document.getElementById('weather-alerts');
+                    alertsDiv.innerHTML = alerts.length > 0 ? alerts.join('<br>') : 'No alerts at the moment.';
+                });
+        };
+    </script>
+</body>
+</html>
